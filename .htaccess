@@ -1,0 +1,13 @@
+RewriteEngine On
+RewriteBase /
+
+# Redirect /invoice to /invoice/
+RewriteRule ^invoice$ invoice/ [R=301,L]
+
+# Serve files directly if they exist
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Route everything else through index.php
+RewriteRule ^invoice/(.*)$ invoice/index.php [L] 
