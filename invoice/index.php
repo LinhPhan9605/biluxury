@@ -79,8 +79,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <p class="mt-4">
                                 Để tra cứu hóa đơn điện tử vui lòng truy cập<br>
-                                <a href="https://homefarm.vn" target="_blank">https://homefarm.vn</a><br>
-                                Nhập mã số thuế <strong>0107814139</strong> và mã số bí mật ở trên để xem chi tiết.
+                                <a href="/invoice" target="_blank">http://portal.biluxury.vn/invoice</a><br>
                             </p>
 
                             <div class="text-center mt-4">
