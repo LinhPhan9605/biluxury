@@ -25,16 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = curl_exec($ch);
     $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
     curl_close($ch);
+    $status = 'Not found';
+    $errMesage = 'Không tìm thấy thông tin trên hệ thống. Vui lòng kiểm tra lại và nhập đúng mã tra cứu và số điện thoại mua hàng';
 
     if ($httpCode === 200 && $response) {
         $result = json_decode($response, true);
+        if (isset($result['result']['status']) && $result['result']['status'] == 'Not issued') {
+            $errMesage = 'Đơn hàng của quý khách chưa được xuất hóa đơn. Biluxury sẽ xuất hóa đơn trong vòng 24h kể từ lúc mua hàng. Qúy khách vui lòng tra cứu lại sau.';
+        }
+    
         if ($result && isset($result['result']['data'])) {
             $data = $result['result']['data'];
+            $status = $result['result']['status'];
         }
     }
 
     if (!$data) {
         if ($pos_reference == 'test') {
+            $status = 'Issued';
             $data = [
                 'pos_reference' => '00310-0032156-0002',
                 'issued_date' => '02-06-2025',
@@ -42,10 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'reservation_code' => 'H25TY45KJNMH3Y'
             ];
             $error = 'Không tìm thấy thông tin, hiển thị dữ liệu demo';
-        } else {
-            header('Location: /invoice?error=Không tìm thấy thông tin');
-            exit;
         }
+    }
+
+    if ($status != 'Issued') {
+        header('Location: /invoice?error=' . $errMesage);
     }
 }
 ?>
@@ -79,7 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                             <p class="mt-4">
                                 Để tra cứu hóa đơn điện tử vui lòng truy cập<br>
-                                <a href="/invoice" target="_blank">http://portal.biluxury.vn/invoice</a><br>
+                                <a href="https://vinvoice.viettel.vn/utilities/invoice-search" target="_blank">https://vinvoice.viettel.vn/utilities/invoice-search</a><br>
+                                <span>Nhập mã số thuế Biluxury: 0106707374 và Mã số bí mật: <?= htmlspecialchars($data['reservation_code']) ?> để tải hóa đơn. Xin cám ơn.</span>
                             </p>
 
                             <div class="text-center mt-4">
